@@ -30,3 +30,7 @@
 *.exe
 *.out
 *.app
+
+/.esphome/
+/secrets.yaml
+/.vscode/

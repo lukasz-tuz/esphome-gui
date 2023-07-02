@@ -1,0 +1,128 @@
+esphome:
+  name: esphome-gui-lilygo-tembed-clock
+  includes:
+    - esphome/components/gui/lv_conf.h
+  platformio_options:
+    # CDC_ON_BOOT enables early access to serial console;
+    # this way it can print all the core dumps etc.
+    build_flags:
+      - "-D ARDUINO_USB_CDC_ON_BOOT=1"
+      - "-D BOARD_HAS_PSRAM=1"
+    board_build.mcu: esp32s3
+    board_build.f_cpu: 240000000L
+    board_build.name: "LilyGO T-Embed ESP32-S3"
+    board_build.upload.flash_size: "16MB"
+    board_build.upload.maximum_size: 16777216
+    board_build.vendor: "LilyGO"
+    build_type: debug
+    debug_speed: 12000
+    debug_tool: esp-builtin
+    debug_init_break: tbreak setup
+    # upload_protocol: esp-builtin
+    upload_protocol: esptool
+    monitor_filters: esp32_exception_decoder
+  on_boot:
+    priority: 600
+    then:
+      - lambda: |-
+          id(disp).enable();
+          id(disp).transfer_byte(0x11);
+          id(disp).disable();
+      - switch.turn_on: power_on
+
+esp32:
+  board: esp32-s3-devkitc-1
+  variant: esp32s3
+  framework:
+    type: arduino
+
+external_components:
+  - source:
+      type: git
+      url: https://github.com/lukasz-tuz/esphome-gui
+      ref: main
+    components: [ display, gui ]
+
+# Enable logging
+logger:
+  level: DEBUG
+
+# Enable Home Assistant API
+api:
+
+ota:
+  password: !secret ota_password
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+spi:
+  clk_pin: GPIO12
+  mosi_pin: GPIO11
+
+display:
+  - platform: st7789v
+    model: CUSTOM
+    auto_clear_enabled: False
+    eightbitcolor: False
+    update_interval: 10s
+    rotation: 0
+    width: 170
+    height: 320
+    offset_width: 0
+    offset_height: 35
+    backlight_pin: GPIO15
+    cs_pin: GPIO10
+    dc_pin: GPIO13
+    reset_pin: GPIO9
+    id: disp
+
+time:
+  - platform: homeassistant
+    id: home_time
+    on_time:
+      - seconds: 0
+        minutes: /1
+        then:
+          - lambda: |
+              id(mylabel).strftime("%H:%M", id(home_time).now());
+    on_time_sync: 
+      then:
+        - lambda: |
+            id(mylabel).strftime("%H:%M", id(home_time).now());
+
+gui:
+  id: mygui
+  display_id: disp
+  items:
+    - type: label
+      id: mylabel
+      position: 40, 100
+      dimensions: 100x25
+    - type: label
+      id: otherlabel
+      position: 40, 200
+      dimensions: 100x25
+      text: "Hello!"
+    - type: checkbox
+      id: myswitch
+      position: 0,0
+      dimensions: 170x25
+      switch_id: power_on
+
+switch:
+  - platform: gpio
+    pin:
+      number: GPIO46
+      mode:
+        output: True
+    name: "Power On"
+    id: power_on
+  - platform: gpio
+    pin:
+      number: GPIO15
+      mode:
+        output: True
+    name: "Display Backlight"
+    id: backlight
