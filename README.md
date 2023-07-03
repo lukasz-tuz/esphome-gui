@@ -84,19 +84,6 @@ external_components:
 
 See [ESPHome external components documentation](https://esphome.io/components/external_components.html) for more information.
 
-One wrinkle that hasn't been ironed out yet is the include path for `lv_conf.h` file. For now it _needs to be_ provided in the `esphome` section of the configuration file.
-
-```yaml
-esphome:
-  name: esphome-lvgl
-  includes:
-    - esphome/components/gui/lv_conf.h
-```
-
-> **Warning**
-> 
-> If `lv_conf.h` is not included, build errors will happen!
-
 After that, `esphome-gui` is used in a usual fashion:
 
 ```yaml

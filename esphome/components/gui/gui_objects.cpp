@@ -51,15 +51,17 @@ void GuiLabel::dump_config() {
   ESP_LOGCONFIG(TAG, "Label created at (%i, %i)", this->x_, this->y_);
 }
 
-void GuiLabel::print(const char* text) {
+void GuiLabel::print(const char *text) {
   this->set_text(text);
   this->update();
 }
-void GuiLabel::print(int x, int y, const char* text) {
+void GuiLabel::print(int x, int y, const char *text) {
   this->set_text(text);
   this->set_coords(x, y);
   this->update();
 }
+
+#ifdef USE_TIME
 void GuiLabel::strftime(const char *format, time::ESPTime time) {
   char buffer[64] = {0};
   size_t ret = time.strftime(buffer, sizeof(buffer), format);
@@ -76,6 +78,7 @@ void GuiLabel::strftime(int x, int y, const char *format, time::ESPTime time) {
   this->strftime(format, time);
   this->update();
 }
+#endif
 
 #ifdef USE_CHECKBOX
 void GuiCheckbox::setup() {

@@ -1,7 +1,10 @@
+import os
 import re
 
 import esphome.codegen as cg
 import esphome.config_validation as cv
+import esphome.core as core
+import esphome.core.config as cfg
 from esphome.const import CONF_DIMENSIONS, CONF_ID, CONF_POSITION, CONF_TYPE
 
 from esphome.components import display, switch
@@ -99,7 +102,7 @@ CONFIG_SCHEMA = cv.All(
 # of lv_conf_internal.h. Internal config is under:
 # .esphome/build/<project_name>/.piolibdeps/<project_name>/lvgl/src
 #
-# lvgl.h gets copied to:
+# lv_conf.h gets copied to:
 # .esphome/build/<project_name>/src
 #
 # So LV_CONF_PATH should point three levels up and into the src directory.
@@ -130,6 +133,14 @@ async def gui_items_to_code(config):
 
 
 async def to_code(config):
+    whereami = os.path.realpath(__file__)
+    component_dir = os.path.dirname(whereami)
+
+    # Make sure that lv_conf.h gets copied to the src directory, along with
+    # other generated files.
+    lv_conf_path = os.path.join(component_dir, 'lv_conf.h')
+    core.CORE.add_job(cfg.add_includes, [lv_conf_path])
+    
     cg.add_library("https://github.com/lvgl/lvgl.git", None)
     cg.add_platformio_option("build_flags", LVGL_BUILD_FLAGS)
 
