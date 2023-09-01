@@ -407,14 +407,6 @@ class Display {
   void get_text_bounds(int x, int y, const char *text, BaseFont *font, TextAlign align, int *x1, int *y1, int *width,
                        int *height);
 
-#ifdef USE_GUI
-  // public DisplayBuffer methods for LVGL
-  virtual void write_display_data() = 0;
-  virtual void update() = 0;
-  virtual size_t get_buffer_length_() = 0;
-  uint8_t *get_buffer() { return this->buffer_; }
-#endif
-
   /// Internal method to set the display writer lambda.
   void set_writer(display_writer_t &&writer);
 
