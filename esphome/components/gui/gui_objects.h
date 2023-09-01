@@ -39,7 +39,7 @@ class GuiLabel : public GuiObject, public Component {
 
   void print(const char* text);
   void print(int x, int y, const char* text);
-#ifdef USE_TIME
+#ifdef USE_TIMEX
   void strftime(const char* format, time::ESPTime time);
   void strftime(int x, int y, const char* format, time::ESPTime time);
 #endif
