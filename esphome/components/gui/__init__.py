@@ -110,7 +110,7 @@ CONFIG_SCHEMA = cv.All(
 # here, esphome's build picks it up.
 LVGL_BUILD_FLAGS = [
     "-D LV_USE_LOG=1",
-    "-D LV_USE_DEV_VERSION=0",
+    "-D LV_USE_DEV_VERSION=1",
 ]
 
 
