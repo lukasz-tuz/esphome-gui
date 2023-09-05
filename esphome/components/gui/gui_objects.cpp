@@ -61,7 +61,7 @@ void GuiLabel::print(int x, int y, const char *text) {
   this->update();
 }
 
-#ifdef USE_TIME
+#ifdef USE_TIMEX
 void GuiLabel::strftime(const char *format, time::ESPTime time) {
   char buffer[64] = {0};
   size_t ret = time.strftime(buffer, sizeof(buffer), format);
