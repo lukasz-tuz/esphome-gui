@@ -1,7 +1,5 @@
 esphome:
   name: esphome-gui-lilygo-tembed-clock
-  includes:
-    - esphome/components/gui/lv_conf.h
   platformio_options:
     # CDC_ON_BOOT enables early access to serial console;
     # this way it can print all the core dumps etc.
@@ -22,7 +20,7 @@ esphome:
     upload_protocol: esptool
     monitor_filters: esp32_exception_decoder
   on_boot:
-    priority: 600
+    priority: 250
     then:
       - lambda: |-
           id(disp).enable();
@@ -80,6 +78,7 @@ display:
 
 time:
   - platform: homeassistant
+    timezone: CET-1CEST,M3.5.0,M10.5.0/3
     id: home_time
     on_time:
       - seconds: 0
@@ -110,6 +109,7 @@ gui:
       position: 0,0
       dimensions: 170x25
       switch_id: power_on
+      text: "Power On"
 
 switch:
   - platform: gpio

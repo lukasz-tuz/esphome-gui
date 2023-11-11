@@ -61,8 +61,8 @@ void GuiLabel::print(int x, int y, const char *text) {
   this->update();
 }
 
-#ifdef USE_TIMEX
-void GuiLabel::strftime(const char *format, time::ESPTime time) {
+#ifdef USE_TIME
+void GuiLabel::strftime(const char *format, ESPTime time) {
   char buffer[64] = {0};
   size_t ret = time.strftime(buffer, sizeof(buffer), format);
 
@@ -74,7 +74,7 @@ void GuiLabel::strftime(const char *format, time::ESPTime time) {
     this->update();
   }
 }
-void GuiLabel::strftime(int x, int y, const char *format, time::ESPTime time) {
+void GuiLabel::strftime(int x, int y, const char *format, ESPTime time) {
   this->strftime(format, time);
   this->update();
 }
@@ -85,41 +85,41 @@ void GuiCheckbox::setup() {
   GuiObject::setup();
 
   lv_obj_t *screen = lv_scr_act();
-
   if (screen == nullptr) {
     ESP_LOGW(TAG, "Failed to get screen pointer");
     return;
   }
   this->obj = lv_checkbox_create(lv_scr_act());
-
-  if (this->get_text() != "") {
-    lv_checkbox_set_text(this->obj, this->get_text());
-  }
   // TODO: properly map esphome's font objects to lvgl
+  lv_checkbox_set_text_static(this->obj, this->get_text());
+
   lv_obj_set_style_text_font(this->obj, &lv_font_montserrat_18,
                              LV_PART_MAIN | LV_STATE_DEFAULT);
+  
 
-  lv_obj_add_event(this->obj, this->event_callback, LV_EVENT_VALUE_CHANGED,
-                   (void *)this);
+  this->switch_state = this->switch_->get_initial_state();
+
+  lv_obj_add_event_cb(this->obj, this->gui_event_callback,
+                      LV_EVENT_VALUE_CHANGED, (void *)this);
   this->update();
 }
 
 void GuiCheckbox::loop() {
-  if (this->switch_ == nullptr) return;
   bool state = this->switch_->state;
-  auto name = this->switch_->get_name();
-
-  lv_checkbox_set_text(this->obj, name.c_str());
-
-  ((state) ? lv_obj_add_state(obj, LV_STATE_CHECKED)
-           : lv_obj_clear_state(obj, LV_STATE_CHECKED));
+  if (state != this->switch_state) {
+    ((state) ? lv_obj_add_state(this->obj, LV_STATE_CHECKED)
+             : lv_obj_clear_state(this->obj, LV_STATE_CHECKED));
+    this->switch_state = state;
+  }
 }
 
-void GuiCheckbox::event_callback(lv_event_t *event) {
+void GuiCheckbox::gui_event_callback(lv_event_t *event) {
   lv_obj_t *target = (lv_obj_t *)lv_event_get_target(event);
   GuiCheckbox *sw = (GuiCheckbox *)event->user_data;
   bool state = (lv_obj_get_state(target) & LV_STATE_CHECKED);
 }
+
+void GuiCheckbox::switch_event_callback(bool state) {}
 
 void GuiCheckbox::dump_config() {
   ESP_LOGCONFIG(TAG, "Checkbox created at (%i, %i)", this->x_, this->y_);
