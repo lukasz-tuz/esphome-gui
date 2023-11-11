@@ -30,7 +30,7 @@ class GuiComponent : public Component {
   DisplayBuffer *display_{nullptr};
   lv_disp_t *lv_disp_{nullptr};
 
-  lv_disp_rotation_t get_lv_rotation();
+  lv_disp_rot_t get_lv_rotation();
 
  private:
   HighFrequencyLoopRequester high_freq_;

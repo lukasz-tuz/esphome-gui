@@ -39,9 +39,9 @@ class GuiLabel : public GuiObject, public Component {
 
   void print(const char* text);
   void print(int x, int y, const char* text);
-#ifdef USE_TIMEX
-  void strftime(const char* format, time::ESPTime time);
-  void strftime(int x, int y, const char* format, time::ESPTime time);
+#ifdef USE_TIME
+  void strftime(const char* format, ESPTime time);
+  void strftime(int x, int y, const char* format, ESPTime time);
 #endif
 };
 
@@ -49,6 +49,7 @@ class GuiLabel : public GuiObject, public Component {
 class GuiCheckbox : public GuiObject, public Component {
  protected:
   switch_::Switch* switch_;
+  bool switch_state;
 
  public:
   void setup() override;
@@ -59,7 +60,12 @@ class GuiCheckbox : public GuiObject, public Component {
   }
 
   void set_switch(switch_::Switch* sw) { this->switch_ = sw; }
-  static void event_callback(lv_event_t* event);
+  // Callback for events generated from the UI (e.g., someone clicked the UI,
+  // and now need to update switch value)
+  static void gui_event_callback(lv_event_t* event);
+  // Callback for events generated from the switch (e.g., someone changed switch
+  // via Home Assistant and now need to update GUI)
+  static void switch_event_callback(bool state);
 };
 #endif
 

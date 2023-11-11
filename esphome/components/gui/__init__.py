@@ -110,7 +110,7 @@ CONFIG_SCHEMA = cv.All(
 # here, esphome's build picks it up.
 LVGL_BUILD_FLAGS = [
     "-D LV_USE_LOG=1",
-    "-D LV_USE_DEV_VERSION=1",
+    "-D LV_USE_DEV_VERSION=0",
 ]
 
 
@@ -137,12 +137,12 @@ async def to_code(config):
 
     # Make sure that lv_conf.h gets copied to the src directory, along with
     # other generated files.
-    lv_conf_path = os.path.join(component_dir, 'lv_conf.h')
+    lv_conf_path = os.path.join(component_dir, "lv_conf.h")
     core.CORE.add_job(cfg.add_includes, [lv_conf_path])
- 
+
     cg.add_library("lvgl/lvgl", "^8.3")
     cg.add_platformio_option("build_flags", LVGL_BUILD_FLAGS)
-    cg.add_platformio_option("build_flags", ["-D LV_CONF_PATH='"+lv_conf_path+"'"])
+    cg.add_platformio_option("build_flags", ["-D LV_CONF_PATH='" + lv_conf_path + "'"])
     gui = cg.new_Pvariable(config[CONF_ID])
     await cg.register_component(gui, config)
 
@@ -150,6 +150,7 @@ async def to_code(config):
 
     cg.add(gui.set_display(disp))
     cg.add_define("USE_GUI")
+    cg.add_define("USE_LVGL_PROD")
 
     if CONF_ITEMS in config:
         await gui_items_to_code(config[CONF_ITEMS])
