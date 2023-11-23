@@ -90,15 +90,13 @@ void GuiCheckbox::setup() {
     return;
   }
   this->obj = lv_checkbox_create(lv_scr_act());
-  // TODO: properly map esphome's font objects to lvgl
-  lv_checkbox_set_text_static(this->obj, this->get_text());
 
+  lv_checkbox_set_text_static(this->obj, this->get_text());
   lv_obj_set_style_text_font(this->obj, &lv_font_montserrat_18,
                              LV_PART_MAIN | LV_STATE_DEFAULT);
-  
 
   this->switch_state = this->switch_->get_initial_state();
-
+  this->switch_->add_on_state_callback(switch_event_callback);
   lv_obj_add_event_cb(this->obj, this->gui_event_callback,
                       LV_EVENT_VALUE_CHANGED, (void *)this);
   this->update();

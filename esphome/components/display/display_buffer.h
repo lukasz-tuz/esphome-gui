@@ -5,7 +5,6 @@
 
 #include "display.h"
 #include "display_color_utils.h"
-
 #include "esphome/core/component.h"
 #include "esphome/core/defines.h"
 
@@ -27,10 +26,9 @@ class DisplayBuffer : public Display {
 
 #ifdef USE_GUI
   // public DisplayBuffer methods for LVGL
-  virtual void write_display_data() = 0;
   virtual void update() = 0;
-  virtual size_t get_buffer_length_() = 0;
   uint8_t *get_buffer() { return this->buffer_; }
+  uint32_t get_buffer_length() { return this->buffer_length_; }
 #endif
 
  protected:
@@ -39,6 +37,7 @@ class DisplayBuffer : public Display {
   void init_internal_(uint32_t buffer_length);
 
   uint8_t *buffer_{nullptr};
+  uint32_t buffer_length_{0};
 };
 
 }  // namespace display
