@@ -31,9 +31,15 @@ void GuiComponent::setup() {
 
   lv_obj_set_style_bg_color(lv_scr_act(), lv_color_hex(0x000000), LV_PART_MAIN);
   this->high_freq_.start();
+  this->last_loop_ = esphome::millis();
 }
 
-void GuiComponent::loop() { lv_timer_handler(); }
+void GuiComponent::loop() { 
+  uint32_t now = esphome::millis();
+  lv_tick_inc(now - this->last_loop_);
+  lv_timer_handler();
+  this->last_loop_ = now;
+}
 
 void GuiComponent::dump_config() {
   auto drv = this->lv_disp_;

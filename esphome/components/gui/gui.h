@@ -43,6 +43,7 @@ class GuiComponent : public Component {
 
  private:
   HighFrequencyLoopRequester high_freq_;
+  uint32_t last_loop_{0};
 };
 
 }  // namespace gui
