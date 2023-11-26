@@ -22,21 +22,17 @@ Slightly modified [display component](https://esphome.io/components/display/) fr
 
 Internally `esphome-gui` relies on [LVGL](https://lvgl.io) library to do all the rendering. So, one might think of this component as an abstraction layer which exposes `lvgl` objects to ESPHome infrastructure.
 
-> **Note**
->
-> Development branch of lvgl is used by default.
-
 Idea is to allow for defining GUI elements (or widgets) directly in YAML...
 
 ```yaml
 gui:
   id: mygui
   display_id: disp
-  items:
-    - type: label
-      id: mylabel
-      position: 40, 100
-      dimensions: 100x25
+  widgets:
+    - label:
+        id: mylabel
+        position: 40, 100
+        dimensions: 100x25
 ```
 ...and let ESPHome do its thing:
 
@@ -65,6 +61,11 @@ Still, goal, the treasure at the end of the rainbow 🌈, is an ESPHome GUI comp
 
 Essentially, this would be a replacement and/or supplement for ESPHome's rendering engine. Where is that component now, see for yourself 😬.
 
+There's a lot of activity around ESPHome and `lvgl` going on as of late, especially
+`@clydebarrow`'s work on building [`lvgl` component](https://github.com/clydebarrow/esphome/tree/lvgl). To avoid excessive overlap and not-invented-here syndrome,
+I'm starting to shift towards re-using his work there. Hopefully, we'll just merge
+it all together and have a single component in ESPHome 🤞🏻.
+
 ## Known Issues
 
 1. Weird things happen when display rotation is enabled.
@@ -90,7 +91,7 @@ After that, `esphome-gui` is used in a usual fashion:
 gui:
   id: mygui
   display_id: disp
-  items:
+  widgets:
     ...
 ```
 
@@ -137,34 +138,33 @@ gui:
 | ------------- | ------ | --------- | ------------------------------------------------------------------------ |
 | `id`          | string | required  | Unique ID for your GUI                                                   |
 | `display_id`  | string | required  | ID of `display` object which will be used alongside with GUI             |
-| `items`       | list   | required  | List of GUI elements. See [GUI Objects](#gui-objects) for full reference |
+| `widgets`     | list   | required  | List of GUI elements. See [GUI Objects](#gui-objects) for full reference |
 
 
 ## GUI Objects
 
-GUI objects (or elements, widgets, items,... I should really settle on one name...) are created under `items` list in GUI configuration.
+GUI objects (or elements, widgets, items,... I should really settle on one name...) are created under `widgets` list in GUI configuration.
 
 ```yaml
 gui:
   id: mygui
   display_id: disp
-  items:
-    - type: label
-      id: mylabel
-      position: 40, 100
-      dimensions: 100x25
-    - type: checkbox
-      id: myswitch
-      position: 0,0
-      dimensions: 170x25
-      switch_id: power_on
+  widgets:
+    - label:
+        id: mylabel
+        position: 40, 100
+        dimensions: 100x25
+    - checkbox:
+        id: myswitch
+        position: 0,0
+        dimensions: 170x25
+        switch_id: power_on
 ```
 
 Set of available configuration variables largely depends on the item itself, but there is a set of common options.
 
 | Configuration | Values                     | Required? | Description                                                                                            |
 | ------------- | -------------------------- | --------- | ------------------------------------------------------------------------------------------------------ |
-| `type`        | One of `label`, `checkbox` | required  | Defines type of the GUI item                                                                           |
 | `id`          | string                     | required  | Unique ID for the item                                                                                 |
 | `position`    | `X, Y`                     | required  | coordinates of top-left corner of the item on screen. `0, 0` is at the top-left corner of the display. |
 | `dimensions`  | `WxH`                      | required  | width and height of the item in pixes, following `WxH` format.                                         |
@@ -190,10 +190,10 @@ gui:
   id: mygui
   display_id: disp
   items:
-    - type: label
-      id: mylabel
-      position: 40, 100
-      dimensions: 100x25
+    - label:
+        id: mylabel
+        position: 40, 100
+        dimensions: 100x25
 ```
 
 | Configuration | Values | Required? | Description            |
@@ -236,11 +236,11 @@ gui:
   id: mygui
   display_id: disp
   items:
-    - type: checkbox
-      id: myswitch
-      position: 0,0
-      dimensions: 170x25
-      switch_id: power_on
+    - checkbox:
+        id: myswitch
+        position: 0,0
+        dimensions: 170x25
+        switch_id: power_on
 ```
 
 | Configuration | Values | Required? | Description            |
