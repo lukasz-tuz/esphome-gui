@@ -22,10 +22,6 @@ esphome:
   on_boot:
     priority: 250
     then:
-      - lambda: |-
-          id(disp).enable();
-          id(disp).transfer_byte(0x11);
-          id(disp).disable();
       - switch.turn_on: power_on
 
 esp32:
@@ -61,15 +57,11 @@ spi:
 
 display:
   - platform: st7789v
-    model: CUSTOM
+    model: LILYGO_T-EMBED_170X320
     auto_clear_enabled: False
     eightbitcolor: False
     update_interval: 10s
     rotation: 0
-    width: 170
-    height: 320
-    offset_width: 0
-    offset_height: 35
     backlight_pin: GPIO15
     cs_pin: GPIO10
     dc_pin: GPIO13
@@ -94,22 +86,22 @@ time:
 gui:
   id: mygui
   display_id: disp
-  items:
-    - type: label
-      id: mylabel
-      position: 40, 100
-      dimensions: 100x25
-    - type: label
-      id: otherlabel
-      position: 40, 200
-      dimensions: 100x25
-      text: "Hello!"
-    - type: checkbox
-      id: myswitch
-      position: 0,0
-      dimensions: 170x25
-      switch_id: power_on
-      text: "Power On"
+  widgets:
+    - label:
+        id: mylabel
+        position: 40, 100
+        dimensions: 100x25
+    - label:
+        id: otherlabel
+        position: 40, 200
+        dimensions: 100x25
+        text: "Hello!"
+    - checkbox:
+        id: myswitch
+        position: 0,0
+        dimensions: 170x25
+        switch_id: power_on
+        text: "Power On"
 
 switch:
   - platform: gpio

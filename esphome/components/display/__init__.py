@@ -117,7 +117,7 @@ async def setup_display_core_(var, config):
 
 async def register_display(var, config):
     await setup_display_core_(var, config)
-    cg.add_define("USE_GUI")
+    cg.add_define("USE_GUI 1")
 
 
 @automation.register_action(
