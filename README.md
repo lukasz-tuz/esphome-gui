@@ -1,3 +1,8 @@
+
+> [!IMPORTANT]
+> [@clydebarrow](https://github.com/clydebarrow)'s fine work on `lvgl` component is now merged into [upstream ESPHome](https://esphome.io/components/lvgl/)!
+> This project is now redundant, so as of Oct 21st 2024 it is archived. 📦
+
 # ESPHome GUI Component
 
 - [ESPHome GUI Component](#esphome-gui-component)
